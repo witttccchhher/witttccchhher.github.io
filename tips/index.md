@@ -1,25 +1,24 @@
 ---
-# https://vitepress.dev/reference/default-theme-home-page
 layout: home
 
 hero:
   name: "Useful Nix"
   text: "Nix & NixOS tips and tricks"
-  tagline: "Here are some tips for NixOS, Home-Manager and Nix. Happy reading!"
+  tagline: "Здесь вы найдете статьи по Nix, NixOS и Home Manager. Приятного чтения!"
   actions:
     - theme: brand
-      text: Start reading
+      text: Начать чтение
       link: /introduction
     - theme: alt
-      text: My GitHub
+      text: Мой GitHub
       link: https://github.com/witttccchhher
 
 features:
   - title: Nix
-    details: Nix is a purely functional package manager
+    details: Nix это чисто функциональный менеджер пакетов
   - title: NixOS
-    details: NixOS is a free and open source Linux distribution based on the Nix package manager
+    details: NixOS это бесплатный дистрибутив Linux с открытым исходным кодом, основанный на менеджере пакетов Nix
   - title: Home Manager
-    details: Home Manager is a system for managing a user environment using the Nix package manager
+    details: Home Manager это система управления пользовательской средой с помощью менеджера пакетов Nix
 ---
 
