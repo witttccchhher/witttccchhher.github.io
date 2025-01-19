@@ -13,14 +13,14 @@ export default {
     },
 
     nav: [
-      { text: "Home", link: "/" },
-      { text: "Get started", link: "/introduction" }
+      { text: "Главная", link: "/" },
+      { text: "Начать чтение", link: "/introduction" }
     ],
 
     sidebar: [
       {
         items: [
-          { text: "Introduction", link: "/introduction" },
+          { text: "Введение и краткий обзор", link: "/introduction" },
           {
             text: "Nix",
             collapsed: false,
@@ -34,7 +34,10 @@ export default {
           {
             text: "Home Manager",
             collapsed: false,
-            items: []
+            items: [
+              { text: "Установка", link: "/home-manager/installation" },
+              { text: "Введение", link: "/home-manager/introduction" }
+            ]
           }
         ]
       }
