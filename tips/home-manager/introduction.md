@@ -22,7 +22,7 @@ programs.git = {
     helper = store
 ```
 
-Приведу пример конфигурации абстрактного пакета:
+### Пример конфигурации абстрактного пакета
 ```nix
 { pkgs, config, lib, ... }: {
     programs.<name> = {
@@ -52,6 +52,7 @@ programs.git = {
 
 > Комментарий с названием языка программирования перед куском кода работает, к сожалению, не везде. Это функция Treesitter (https://github.com/nvim-treesitter/nvim-treesitter), плагина для подсветки синтаксиса в Neovim
 
+### Пример конфигурации программы, для которой нет опций в HM
 А что делать, если в HM нет опций для настройки чего-либо? Тогда на помощь на приходят `home.file` и `xdg.configFile`:
 ```nix
 xdg.configFile."<относительный путь к файлу конфига>".text = /* <programming language> */ ''
@@ -106,3 +107,70 @@ $ home-manager switch
 # Длинная версия, нужна только если у вас несколько конфигураций HM или же путь до флейка не указан где-либо еще
 $ home-manager switch --flake ~/path/to/your/nix/directory#<your username>
 ```
+
+## Пример конфигурации Alacritty
+
+Попробуем написать небольшую конфигурацию для эмулятора терминала **Alacritty**
+```nix
+{ pkgs, ... }: {
+    programs.alacritty = let
+        font = {
+            family = "JetBrains Mono";
+            size = 16;
+        };
+    in {
+        enable = true; /* Устанавливаем alacritty.
+                          Обратите внимание, при этом не обязательно
+                          указывать alacritty в списке пакетов для установки */
+
+        package = pkgs.alacritty; /* Указываем какой именно пакет мы хотим установить.
+                                     Например, можно установить какой-либо форк */
+
+        settings = { /* Настройки alacritty, которые будут преобразованы
+                        в формат toml и записаны в файл ~/.config/alacritty.toml */
+            font = {
+                size = font.size; /* Здесь мы устанавливаем размер шрифта,
+                                     который берется из конструкции let ... in выше */
+                normal = { family = font.family; style = "Regular"; };
+                normal = { family = font.family; style = "Bold"; };
+                normal = { family = font.family; style = "Italic"; };
+            };
+            cursor = {
+                style = { shape = "Block"; blinking = "Off"; };
+                unfocused_hollow = false;
+            };
+        };
+    };
+}
+```
+
+Все, что мы написали выше приведет к следующим изменениям после выполнения команды `home-manager switch`:
+ - в систему будет установлен **Alacritty** (обратите внимание, только для пользователя, для которого была написана конфигурация)
+ - будет установлен стандартный пакет alacritty из *Nixpkgs*, если вы не укажете какой-либо другой пакет
+ - в файл *~/.config/alacritty/alacritty.toml* будет записано следующее:
+```toml
+[font]
+size = 16
+[font.normal]
+family = "JetBrains Mono"
+style = "Regular"
+[font.bold]
+family = "JetBrains Mono"
+style = "Bold"
+[font.italic]
+family = "JetBrains Mono"
+style = "Italic"
+
+[cursor]
+unfocused_hollow = false
+[cursor.style]
+blinking = "Off"
+shape = "Block"
+```
+
+## Поиск опций HM
+
+Где искать все параметры для **Home Manager**? Для этого есть несколько сайтов:
+ - [Nix-community Home Manager Configuration Options ](https://nix-community.github.io/home-manager/options.xhtml) - просто список абсолютно всех опций, поиска нет (официальный)
+ - [Home Manager option search by Extranix](https://home-manager-options.extranix.com/) - самый удобный сайт, позволяет искать опции и выбирать релиз **HM**
+ - [Searchix by Alanpearce](https://searchix.alanpearce.eu/options/home-manager/search) - ещё один сайт с поиском опций, не позволяет выбрать релиз, а также имеет довольно странную сортировку результатов (иногда трудно найти нужную опцию)
