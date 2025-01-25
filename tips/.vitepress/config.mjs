@@ -34,7 +34,10 @@ export default {
           {
             text: "Nix",
             collapsed: false,
-            items: []
+            base: "/nix",
+            items: [
+              { text: "Приоритеты", link: "/priorities" }
+            ]
           },
           {
             text: "NixOS",
