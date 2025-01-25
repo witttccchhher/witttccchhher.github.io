@@ -4,13 +4,14 @@ export default {
   description: "Nix & NixOS tips and tricks",
   lastUpdated: true,
   cleanUrls: true,
+  outDir: "./dist",
   head: [
-    ["link", { rel: "icon", href: "/assets/logo-light.svg" }]
+    ["link", { rel: "icon", href: "/logo-light.svg" }]
   ],
   themeConfig: {
     logo: {
-      light: "/assets/logo-dark.svg",
-      dark: "/assets/logo-light.svg"
+      light: "/logo-dark.svg",
+      dark: "/logo-light.svg"
     },
     search: {
       provider: "local",
