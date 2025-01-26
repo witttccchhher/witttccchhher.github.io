@@ -1,0 +1,176 @@
+# Nix Flakes
+Флейки - экспериметальная особенность **Nix**, которая предоставляет способ написать выражения **Nix** (и пакеты), зависимости которых включены в *lock-файле*, улучшая воспроизводимость установок **Nix**. *Lock-файлы* вы могли видеть в других языках программирования: для **Go** - `go.sum`, для **JS/TS** - `package-lock.json`, для **Rust** - `Cargo.lock`.
+
+## Использование флейков
+Если вы не хотите использовать флейки на постоянной основе, просто добавьте следующий флаг к любой `nix` команде:
+```shell
+ --experimental-features 'nix-command flakes'
+```
+Для постоянного включения флейков добавьте следующее в вашу конфигурацию:
+```nix
+nix.settings.experimental-features = [ "nix-command" "flakes" ];
+```
+В **Home Manager**:
+```nix
+nix.settings.extra-experimental-features = [ "nix-command" "flakes" ];
+```
+
+## Начало работы
+Для создания базового флейка выполните команду `nix flake init`. Это создаст базовый флейк для вашего проекта со следующим содержимым:
+```nix
+{
+  description = "A very basic flake";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+  };
+
+  outputs = { self, nixpkgs }: {
+    packages.x86_64-linux.hello = nixpkgs.legacyPackages.x86_64-linux.hello;
+    packages.x86_64-linux.default = self.packages.x86_64-linux.hello;
+  };
+}
+```
+> Здесь представлен флейк для сборки вашего пакета. Подробнее об этом в этой статье (TODO) ## Схема флейка
+Флейки содержат 4 атрибута верхнего уровня:
+ - `description`: описание флейка
+ - `inputs`: набор всех зависимостей флейка
+ - `outputs`: принимает на вход набор `inputs` и возвращает итоговый набор
+ - `nixConfig`: некоторые параметры для nix (из *nix.conf*), например `extra-substituters`
+
+### Схема `inputs`
+В поле `inputs` вы должны указать все зависимости флейка. Чаще всего это сам **nixpkgs**.
+Зависимости указываются в формате
+```nix
+nixpkgs /* имя, может быть любым */ = {
+  type = "github"; # Тип фетчера, указывает откуда скачивать
+  owner = "NixOS"; # Автор репозитория
+  repo = "nixpkgs"; # Имя репозитория  
+};
+```
+Помимо такой записи, существует более короткая в url-формате:
+```nix
+nixpkgs = "github:NixOS/nixpkgs/<rev or ref>";
+```
+Другие необязательные аргументы:
+```nix
+  rev = "a3a3dda3bacf61e8a39258a0ed9c924eeca8e293"; # Хеш коммита
+  ref = "nixos-20.09"; # Имя ветки/тега
+  dir = "sub/dir"; # Подпапка, в которой расположен flake.nix, если его нет в корне
+```
+Существуют следующие типы:
+ - `indirect` (по умолчанию): выполняет поиск по `flake-id` в [реестре](https://nix.dev/manual/nix/2.24/command-ref/new-cli/nix3-registry) флейков, например `nixpkgs/nixos-unstable/a3a3dda3bacf61e8a39258a0ed9c924eeca8e293` укажет на канал **nixpkgs-unstable** с переданным коммитом
+ - `path`: любой локальный каталог, содержащий *flake.nix*, например `path:/home/user/sub/dir` (относительные пути также поддерживаются, должны начинаться с `.`)
+ - `git(+http|+https|+ssh|+git|+file)`: указывает на репозиторий **git**
+   <details><summary>Примеры</summary>
+
+   + `git+https://example.org/my/repo?dir=flake1`
+   + `git+ssh://git@github.com/NixOS/nix?ref=v1.2.3`
+   + `git:/home/user/sub/dir`
+   + `git://github.com/edolstra/dwarffs?ref=unstable&rev=e486d8d40e626a20e06d792db8cc5ac5aba9a5b4`
+   + `git+file:///home/my-user/some-repo/some-repo`
+   </details>
+ - `mercurial(+http|+https|+ssh|+file)`: для репозиториеа **Mercurial**, по форме аналогично `git`, но с изменением на `hg` (`hg+https`, `hg+file`, `hg+ssh`, ...)
+ - `tarball(+http|+https|+file)`: **url** на тарболл
+ - `file(+http|+https|+file)`: обычные файлы или архивы каталогов
+ - `github`: более эффективный способ получения репозиториев с **GitHub**, загружается как `tarball`, а не `git`, так как требует меньше места на диске и скачивается быстрее
+   <details><summary>Примеры</summary>
+
+   + `github:edolstra/dwarffs`
+   + `github:edolstra/dwarffs/d3f2baba8f425779026c6ec04021b2e927f61e31`
+   + `github:internal/project?host=company-github.example.org`
+   </details>
+ - `gitlab`: то же, что и `github`, но для GitLab
+ - `sourcehut`: то же, что и `github`, но для Sourcehut
+
+У каждого инпута также существует параметр `flake`. По умолчанию он установлен на `true`, но если в репозитории нет файла *flake.nix*, вам нужно установить его в `false`. Тогда в стор будет скопировано просто содержимое репозитория, которое вы сможете использовать как угодно.
+
+### Схема `outputs`
+Как только инпуты обработаны, они передаются в `outputs` вместе с `self`, который указывает на каталог этого флейка в сторе. Возвращает входные данные по следующей схеме:
+```nix
+{ self, ... }@inputs: /*
+  Здесь <system> - архитектура вашей системы ("x86_64-linux", "aarch64-linux", "i686-linux", "x86_64-darwin", ...)
+  <name> - имя итогового пакета, шелла, или чего бы то ни было
+  <store-path> - путь в /nix/store/...
+*/ {
+  # Выполняется при nix flake check
+  checks."<system>"."<name>" = derivation;
+  # Выполняется при nix build .#<name>
+  packages."<system>"."<name>" = derivation;
+  # Выполняется при nix build .
+  packages."<system>".default = derivation;
+  # Выполняется при nix run .#<name>
+  apps."<system>"."<name>" = {
+    type = "app";
+    program = "<store-path>";
+  };
+  # Выполняется при nix run . -- <args?>
+  apps."<system>".default = { type = "app"; program = "..."; };
+
+  # Форматтер (alejandra, nixfmt или nixpkgs-fmt)
+  formatter."<system>" = derivation;
+  # Для пакетов из nixpkgs, выполняется при nix build .#<name>
+  legacyPackages."<system>"."<name>" = derivation;
+  # Оверлеи, принимаемые другими флейками
+  overlays."<name>" = final: prev: { };
+  # Стандартный оверлей
+  overlays.default = final: prev: { };
+  # Модули NixOS, принимаемые другими флейками
+  nixosModules."<name>" = { config, ... }: { options = {}; config = {}; };
+  # Стандартный модуль
+  nixosModules.default = { config, ... }: { options = {}; config = {}; };
+  # Используется при nixos-rebuild switch --flake .#<hostname>
+  nixosConfigurations."<hostname>" = {};
+  # Используется для nix develop .#<name>
+  devShells."<system>"."<name>" = derivation;
+  # Используется для nix develop
+  devShells."<system>".default = derivation;
+  # Задача сборки для Hydra
+  hydraJobs."<attr>"."<system>" = derivation;
+  # Используется для nix flake init -t <flake>#<name>
+  templates."<name>" = {
+    path = "<store-path>";
+    description = "template description goes here?";
+  };
+  # Используется для nix flake init -t <flake>
+  templates.default = { path = "<store-path>"; description = ""; };
+};
+```
+Вы также можете определять свой атрибуты (как это делает **Home Manager** в `homeConfigurations`), но это те, о которых знает **Nix**.
+
+## Доступ к флейкам из Nix
+Если вам нужно получить какое либо значение из флейка, вы можете использовать что-то вроде
+```nix
+(builtins.getFlake "path:/path/to/directory").packages."<system>".default
+```
+
+## Работа с флейками
+Вот мы написали флейк, что делать с ним дальше? Разумеется, использовать с командой `nix flake ...`:
+ - `archive` - архивирует флейк в */nix/store*
+ - `check` - проверяет ваш флейк на работоспособность, правильность синтаксиса
+ - `clone` - клонирует репозиторий флейка
+ - `info` - показывает информацию о флейке
+ - `init` - инициализирует флейк из шаблона
+ - `lock` - создает *lock-файл* по `inputs`
+ - `metadata` - показывает метаданные флейка
+ - `new` - создает новый флейк по шаблону
+ - `prefetch` - скачивает дерево в */nix/store*
+ - `show` - показывает выходы, предоставленные флейком
+ - `update` - обновляет *lock-файл*
+
+Помимо этого, команда `nixos-rebuild switch` будет читать свою конфигурацию из */etc/nixos/flake.nix*, если он существует или не задан на другое местоположение.
+Стандартный *flake.nix* для NixOS выглядит так:
+```nix
+{
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  };
+  outputs = { self, nixpkgs }: {
+    nixosConfigurations.<hostname> = nixpkgs.lib.nixosSystem {
+      system = "<system>";
+      specialArgs = inputs; # Чтобы использовать любой инпут в конфигурации
+      modules = [ ./configuration.nix ]; # Модули NixOS, обязательно должен быть передан основной файл конфигурации
+    };
+  };
+}
+```
