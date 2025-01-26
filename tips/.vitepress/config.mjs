@@ -6,7 +6,8 @@ export default {
   cleanUrls: true,
   outDir: "./dist",
   head: [
-    ["link", { rel: "icon", href: "/logo-light.svg" }]
+    ["link", { rel: "icon", href: "/logo-light.svg" }],
+    ["meta", { name: "darkreader-lock" }]
   ],
   themeConfig: {
     logo: {
@@ -34,12 +35,16 @@ export default {
           {
             text: "Nix",
             collapsed: false,
+            base: "/nix",
             items: []
           },
           {
             text: "NixOS",
             collapsed: false,
-            items: []
+            base: "/nixos",
+            items: [
+              { text: "Флейки", link: "/flakes" }
+            ]
           },
           {
             text: "Home Manager",
