@@ -29,38 +29,34 @@ export default {
     ],
 
     sidebar: [
+      { text: "Введение и краткий обзор", link: "/introduction" },
       {
+        text: "Nix",
+        collapsed: false,
+        base: "/nix",
         items: [
-          { text: "Введение и краткий обзор", link: "/introduction" },
-          {
-            text: "Nix",
-            collapsed: false,
-            base: "/nix",
-            items: [
-              { text: "Приоритеты", link: "/priorities" }
-            ]
-          },
-          {
-            text: "NixOS",
-            collapsed: false,
-            base: "/nixos",
-            items: [
-              { text: "Флейки", link: "/flakes" }
-            ]
-          },
-          {
-            text: "Home Manager",
-            collapsed: false,
-            base: "/home-manager",
-            items: [
-              { text: "Установка", link: "/installation" },
-              { text: "Введение", link: "/introduction" }
-            ]
-          },
-          { text: "Контакты", link: "/contacts" },
-          { text: "Благодарности", link: "/thanks" }
+          { text: "Приоритеты", link: "/priorities" }
         ]
-      }
+      },
+      {
+        text: "NixOS",
+        collapsed: false,
+        base: "/nixos",
+        items: [
+          { text: "Флейки", link: "/flakes" }
+        ]
+      },
+      {
+        text: "Home Manager",
+        collapsed: false,
+        base: "/home-manager",
+        items: [
+          { text: "Установка", link: "/installation" },
+          { text: "Введение", link: "/introduction" }
+        ]
+      },
+      { text: "Контакты", link: "/contacts" },
+      { text: "Благодарности", link: "/thanks" }
     ],
 
     socialLinks: [
