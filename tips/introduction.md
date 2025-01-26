@@ -7,6 +7,7 @@
 
  - [Введение и краткий обзор](/introduction)
  - Nix
+   - [Изменение приоритетов](/nix/priorities)
  - NixOS
  - Home Manager
    - [Установка](/home-manager/installation)

@@ -36,14 +36,16 @@ export default {
             text: "Nix",
             collapsed: false,
             base: "/nix",
-            items: []
+            items: [
+              { text: "Приоритеты", link: "/priorities" }
+            ]
           },
           {
             text: "NixOS",
             collapsed: false,
             base: "/nixos",
             items: [
-              //{ text: "Флейки", link: "/flakes" }
+              { text: "Флейки", link: "/flakes" }
             ]
           },
           {
