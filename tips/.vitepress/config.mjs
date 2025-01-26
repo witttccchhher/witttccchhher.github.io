@@ -43,7 +43,7 @@ export default {
             collapsed: false,
             base: "/nixos",
             items: [
-              { text: "Флейки", link: "/flakes" }
+              //{ text: "Флейки", link: "/flakes" }
             ]
           },
           {
