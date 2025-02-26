@@ -6,11 +6,16 @@
 Если вы хотите помочь мне, вы можете написать мне в **Telegram**, или отправлять статьи в *Pull Requests* на **GitHub**. Я буду рад каждому!
 
  - [Введение и краткий обзор](/introduction)
- - Nix
-   - [Изменение приоритетов](/nix/priorities)
+ - Nix Package Manager
+    - [Введение](/nixpm/introduction)
+ - Nix Language
+    - [Изменение приоритетов](/nixlang/priorities)
  - NixOS
+    - [Установка](/nixos/installation)
+    - [Введение](/nixos/introduction)
+    - [Флейки](/nixos/flakes)
  - Home Manager
-   - [Установка](/home-manager/installation)
-   - [Введение](/home-manager/introduction)
+    - [Установка](/home-manager/installation)
+    - [Введение](/home-manager/introduction)
  - [Контакты](/contacts)
  - [Благодарности](/thanks)

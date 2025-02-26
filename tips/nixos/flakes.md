@@ -31,12 +31,14 @@ nix.settings.extra-experimental-features = [ "nix-command" "flakes" ];
   };
 }
 ```
-> Здесь представлен флейк для сборки вашего пакета. Подробнее об этом в этой статье (TODO) ## Схема флейка
+> Здесь представлен флейк для сборки вашего пакета. Подробнее об этом в этой статье (TODO)
+
+## Схема флейка
 Флейки содержат 4 атрибута верхнего уровня:
- - `description`: описание флейка
- - `inputs`: набор всех зависимостей флейка
- - `outputs`: принимает на вход набор `inputs` и возвращает итоговый набор
- - `nixConfig`: некоторые параметры для nix (из *nix.conf*), например `extra-substituters`
+- `description`: описание флейка
+- `inputs`: набор всех зависимостей флейка
+- `outputs`: принимает на вход набор `inputs` и возвращает итоговый набор
+- `nixConfig`: некоторые параметры для nix (из *nix.conf*), например `extra-substituters`
 
 ### Схема `inputs`
 В поле `inputs` вы должны указать все зависимости флейка. Чаще всего это сам **nixpkgs**.
@@ -59,29 +61,29 @@ nixpkgs = "github:NixOS/nixpkgs/<rev or ref>";
   dir = "sub/dir"; # Подпапка, в которой расположен flake.nix, если его нет в корне
 ```
 Существуют следующие типы:
- - `indirect` (по умолчанию): выполняет поиск по `flake-id` в [реестре](https://nix.dev/manual/nix/2.24/command-ref/new-cli/nix3-registry) флейков, например `nixpkgs/nixos-unstable/a3a3dda3bacf61e8a39258a0ed9c924eeca8e293` укажет на канал **nixpkgs-unstable** с переданным коммитом
- - `path`: любой локальный каталог, содержащий *flake.nix*, например `path:/home/user/sub/dir` (относительные пути также поддерживаются, должны начинаться с `.`)
- - `git(+http|+https|+ssh|+git|+file)`: указывает на репозиторий **git**
-   <details><summary>Примеры</summary>
+- `indirect` (по умолчанию): выполняет поиск по `flake-id` в [реестре](https://nix.dev/manual/nix/2.24/command-ref/new-cli/nix3-registry) флейков, например `nixpkgs/nixos-unstable/a3a3dda3bacf61e8a39258a0ed9c924eeca8e293` укажет на канал **nixpkgs-unstable** с переданным коммитом
+- `path`: любой локальный каталог, содержащий *flake.nix*, например `path:/home/user/sub/dir` (относительные пути также поддерживаются, должны начинаться с `.`)
+- `git(+http|+https|+ssh|+git|+file)`: указывает на репозиторий **git**
+  <details><summary>Примеры</summary>
 
-   + `git+https://example.org/my/repo?dir=flake1`
-   + `git+ssh://git@github.com/NixOS/nix?ref=v1.2.3`
-   + `git:/home/user/sub/dir`
-   + `git://github.com/edolstra/dwarffs?ref=unstable&rev=e486d8d40e626a20e06d792db8cc5ac5aba9a5b4`
-   + `git+file:///home/my-user/some-repo/some-repo`
-   </details>
- - `mercurial(+http|+https|+ssh|+file)`: для репозиториеа **Mercurial**, по форме аналогично `git`, но с изменением на `hg` (`hg+https`, `hg+file`, `hg+ssh`, ...)
- - `tarball(+http|+https|+file)`: **url** на тарболл
- - `file(+http|+https|+file)`: обычные файлы или архивы каталогов
- - `github`: более эффективный способ получения репозиториев с **GitHub**, загружается как `tarball`, а не `git`, так как требует меньше места на диске и скачивается быстрее
-   <details><summary>Примеры</summary>
+    + `git+https://example.org/my/repo?dir=flake1`
+    + `git+ssh://git@github.com/NixOS/nix?ref=v1.2.3`
+    + `git:/home/user/sub/dir`
+    + `git://github.com/edolstra/dwarffs?ref=unstable&rev=e486d8d40e626a20e06d792db8cc5ac5aba9a5b4`
+    + `git+file:///home/my-user/some-repo/some-repo`
+  </details>
+- `mercurial(+http|+https|+ssh|+file)`: для репозиториеа **Mercurial**, по форме аналогично `git`, но с изменением на `hg` (`hg+https`, `hg+file`, `hg+ssh`, ...)
+- `tarball(+http|+https|+file)`: **url** на тарболл
+- `file(+http|+https|+file)`: обычные файлы или архивы каталогов
+- `github`: более эффективный способ получения репозиториев с **GitHub**, загружается как `tarball`, а не `git`, так как требует меньше места на диске и скачивается быстрее
+  <details><summary>Примеры</summary>
 
-   + `github:edolstra/dwarffs`
-   + `github:edolstra/dwarffs/d3f2baba8f425779026c6ec04021b2e927f61e31`
-   + `github:internal/project?host=company-github.example.org`
-   </details>
- - `gitlab`: то же, что и `github`, но для GitLab
- - `sourcehut`: то же, что и `github`, но для Sourcehut
+    + `github:edolstra/dwarffs`
+    + `github:edolstra/dwarffs/d3f2baba8f425779026c6ec04021b2e927f61e31`
+    + `github:internal/project?host=company-github.example.org`
+  </details>
+- `gitlab`: то же, что и `github`, но для GitLab
+- `sourcehut`: то же, что и `github`, но для Sourcehut
 
 У каждого инпута также существует параметр `flake`. По умолчанию он установлен на `true`, но если в репозитории нет файла *flake.nix*, вам нужно установить его в `false`. Тогда в стор будет скопировано просто содержимое репозитория, которое вы сможете использовать как угодно.
 

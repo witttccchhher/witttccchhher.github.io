@@ -31,9 +31,17 @@ export default {
     sidebar: [
       { text: "Введение и краткий обзор", link: "/introduction" },
       {
-        text: "Nix",
+        text: "Nix Package Manager",
         collapsed: false,
-        base: "/nix",
+        base: "/nixpm",
+        items: [
+          { text: "Введение", link: "/introduction" }
+        ]
+      },
+      {
+        text: "Nix Language",
+        collapsed: false,
+        base: "/nixlang",
         items: [
           { text: "Приоритеты", link: "/priorities" }
         ]
@@ -43,6 +51,8 @@ export default {
         collapsed: false,
         base: "/nixos",
         items: [
+          { text: "Установка", link: "/installation" },
+          { text: "Введение", link: "/introduction" },
           { text: "Флейки", link: "/flakes" }
         ]
       },
