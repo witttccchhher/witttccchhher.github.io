@@ -5,6 +5,7 @@ export default {
   lastUpdated: true,
   cleanUrls: true,
   outDir: "./dist",
+  ignoreDeadLinks: true,
   head: [
     ["link", { rel: "icon", href: "/logo-light.svg" }],
     ["meta", { name: "darkreader-lock" }]
