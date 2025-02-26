@@ -52,7 +52,7 @@ export default {
         base: "/nixos",
         items: [
           { text: "Установка", link: "/installation" },
-          { text: "Введение", link: "/introduction" },
+          //{ text: "Введение", link: "/introduction" },
           { text: "Флейки", link: "/flakes" }
         ]
       },
