@@ -12,7 +12,6 @@
     - [Изменение приоритетов](/nixlang/priorities)
  - NixOS
     - [Установка](/nixos/installation)
-    - [Введение](/nixos/introduction)
     - [Флейки](/nixos/flakes)
  - Home Manager
     - [Установка](/home-manager/installation)
