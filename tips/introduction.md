@@ -13,6 +13,8 @@
  - NixOS
     - [Установка](/nixos/installation)
     - [Флейки](/nixos/flakes)
+    - [Ядро](/nixos/kernel)
+    - [TUIgreet](/nixos/tuigreet)
  - Home Manager
     - [Установка](/home-manager/installation)
     - [Введение](/home-manager/introduction)
