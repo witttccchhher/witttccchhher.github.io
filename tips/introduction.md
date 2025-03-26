@@ -15,6 +15,7 @@
     - [Флейки](/nixos/flakes)
     - [Ядро](/nixos/kernel)
     - [TUIgreet](/nixos/tuigreet)
+    - [Systemd-nspawn](/nixos/systemd-nspawn)
  - Home Manager
     - [Установка](/home-manager/installation)
     - [Введение](/home-manager/introduction)
