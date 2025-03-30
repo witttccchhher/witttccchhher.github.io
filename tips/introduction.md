@@ -16,6 +16,7 @@
     - [Ядро](/nixos/kernel)
     - [TUIgreet](/nixos/tuigreet)
     - [Systemd-nspawn](/nixos/systemd-nspawn)
+    - [FireJail](/nixos/firejail)
  - Home Manager
     - [Установка](/home-manager/installation)
     - [Введение](/home-manager/introduction)
