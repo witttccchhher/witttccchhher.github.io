@@ -14,7 +14,7 @@
     - [Установка](/nixos/installation)
     - [Флейки](/nixos/flakes)
     - [Ядро](/nixos/kernel)
-    - [TUIgreet](/nixos/tuigreet)
+    - [Greetd](/nixos/greetd)
     - [Systemd-nspawn](/nixos/systemd-nspawn)
     - [FireJail](/nixos/firejail)
  - Home Manager

@@ -54,7 +54,11 @@ export default {
         items: [
           { text: "Установка", link: "/installation" },
           //{ text: "Введение", link: "/introduction" },
-          { text: "Флейки", link: "/flakes" }
+          { text: "Флейки", link: "/flakes" },
+          { text: "Настройка ядра", link: "/kernel" },
+          { text: "Greetd", link: "/greetd" },
+          { text: "Systemd-nspawn", link: "/systemd-nspawn" },
+          { text: "Firejail", link: "/firejail" }
         ]
       },
       {

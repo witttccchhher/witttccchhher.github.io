@@ -1,38 +1,16 @@
-# Ядро Linux
+# Настройка ядра Linux
+Вы можете выбрать ядро, которое хотите использовать. По умолчанию установлена последняя версия **LTS** ядра.
 
-## Конфигурация
-
-Вы можете выбрать ядро, которое хотите использовать
-Для этого добавьте в /etc/nixos/configuration.nix:
+Для этого добавьте в cвой конфиг следующее:
 ```nix
 boot.kernelPackages = pkgs.linuxPackages_latest;
 ```
+И пересоберите систему.
+> Список всех доступных ядер можно посмотреть, набрав в `nix repl` `pkgs.linuxPackages` и нажав `Tab`
 
-И пересоберите систему 
-```
-$ sudo nixos-rebuild switch
-$ sudo reboot
-```
-
-Доступные ядра:
-```
-pkgs.linuxPackages                           pkgs.linuxPackages_latest
-pkgs.linuxPackages-libre                     pkgs.linuxPackages_latest-libre
-pkgs.linuxPackages-rt                        pkgs.linuxPackages_latest_hardened
-pkgs.linuxPackages-rt_5_4                    pkgs.linuxPackages_latest_xen_dom0
-pkgs.linuxPackages-rt_5_6                    pkgs.linuxPackages_latest_xen_dom0_hardened
-pkgs.linuxPackages-rt_latest                 pkgs.linuxPackages_mptcp
-pkgs.linuxPackagesFor                        pkgs.linuxPackages_rpi0
-pkgs.linuxPackages_4_14                      pkgs.linuxPackages_rpi1
-pkgs.linuxPackages_4_19                      pkgs.linuxPackages_rpi2
-pkgs.linuxPackages_4_4                       pkgs.linuxPackages_rpi3
-pkgs.linuxPackages_4_9                       pkgs.linuxPackages_rpi4
-pkgs.linuxPackages_5_4                       pkgs.linuxPackages_testing
-pkgs.linuxPackages_5_8                       pkgs.linuxPackages_testing_bcachefs
-pkgs.linuxPackages_5_9                       pkgs.linuxPackages_testing_hardened
-pkgs.linuxPackages_custom                    pkgs.linuxPackages_xen_dom0
-pkgs.linuxPackages_custom_tinyconfig_kernel  pkgs.linuxPackages_xen_dom0_hardened
-pkgs.linuxPackages_hardened                  pkgs.linuxPackages_zen
-pkgs.linuxPackages_hardkernel_4_14
-pkgs.linuxPackages_hardkernel_latest
-```
+## Конфигурация ядра
+Вы можете настроить ядро следующими парметрами:
+- `boot.kernelModules = [ "somemodule" ];` - список модулей ядра, которые будут загружены на втором этапе процесса загрузки.
+- `boot.kernelParams = [ "someparam=value" ];` - список параметров ядра (**только для встроенных модулей**).
+- `boot.extraModprobeConfig = ''options yourmodulename optionA=valueA optionB=valueB'';` - настройка модулей ядра.
+- `boot.extraModulePackages = with config.boot.kernelPackages; [ somepkg ];` - список доп. пакетов, поставляющих модули ядра (например, `amneziawg`)
