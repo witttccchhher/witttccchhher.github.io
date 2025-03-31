@@ -1,6 +1,6 @@
 import {
   useMediaQuery
-} from "./chunk-YJ6QP2VR.js";
+} from "./chunk-Z5QSWKN2.js";
 import {
   computed,
   ref,
@@ -9,36 +9,44 @@ import {
 } from "./chunk-LW4I4DCF.js";
 
 // node_modules/vitepress/dist/client/theme-default/index.js
-import "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/styles/fonts.css";
+import "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/styles/fonts.css";
 
 // node_modules/vitepress/dist/client/theme-default/without-fonts.js
-import "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/styles/vars.css";
-import "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/styles/base.css";
-import "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/styles/icons.css";
-import "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/styles/utils.css";
-import "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/styles/components/custom-block.css";
-import "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/styles/components/vp-code.css";
-import "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/styles/components/vp-code-group.css";
-import "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/styles/components/vp-doc.css";
-import "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/styles/components/vp-sponsor.css";
-import VPBadge from "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/components/VPBadge.vue";
-import Layout from "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/Layout.vue";
-import { default as default2 } from "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/components/VPBadge.vue";
-import { default as default3 } from "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/components/VPImage.vue";
-import { default as default4 } from "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/components/VPButton.vue";
-import { default as default5 } from "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/components/VPHomeContent.vue";
-import { default as default6 } from "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/components/VPHomeHero.vue";
-import { default as default7 } from "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/components/VPHomeFeatures.vue";
-import { default as default8 } from "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/components/VPHomeSponsors.vue";
-import { default as default9 } from "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/components/VPLink.vue";
-import { default as default10 } from "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/components/VPDocAsideSponsors.vue";
-import { default as default11 } from "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/components/VPSocialLink.vue";
-import { default as default12 } from "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/components/VPSocialLinks.vue";
-import { default as default13 } from "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/components/VPSponsors.vue";
-import { default as default14 } from "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/components/VPTeamPage.vue";
-import { default as default15 } from "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/components/VPTeamPageTitle.vue";
-import { default as default16 } from "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/components/VPTeamPageSection.vue";
-import { default as default17 } from "/home/som/witttccchhher.github.io/node_modules/vitepress/dist/client/theme-default/components/VPTeamMembers.vue";
+import "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/styles/vars.css";
+import "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/styles/base.css";
+import "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/styles/icons.css";
+import "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/styles/utils.css";
+import "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/styles/components/custom-block.css";
+import "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/styles/components/vp-code.css";
+import "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/styles/components/vp-code-group.css";
+import "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/styles/components/vp-doc.css";
+import "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/styles/components/vp-sponsor.css";
+import VPBadge from "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/components/VPBadge.vue";
+import Layout from "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/Layout.vue";
+import { default as default2 } from "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/components/VPBadge.vue";
+import { default as default3 } from "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/components/VPButton.vue";
+import { default as default4 } from "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/components/VPDocAsideSponsors.vue";
+import { default as default5 } from "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/components/VPFeatures.vue";
+import { default as default6 } from "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/components/VPHomeContent.vue";
+import { default as default7 } from "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/components/VPHomeFeatures.vue";
+import { default as default8 } from "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/components/VPHomeHero.vue";
+import { default as default9 } from "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/components/VPHomeSponsors.vue";
+import { default as default10 } from "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/components/VPImage.vue";
+import { default as default11 } from "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/components/VPLink.vue";
+import { default as default12 } from "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/components/VPNavBarSearch.vue";
+import { default as default13 } from "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/components/VPSocialLink.vue";
+import { default as default14 } from "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/components/VPSocialLinks.vue";
+import { default as default15 } from "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/components/VPSponsors.vue";
+import { default as default16 } from "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/components/VPTeamMembers.vue";
+import { default as default17 } from "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/components/VPTeamPage.vue";
+import { default as default18 } from "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/components/VPTeamPageSection.vue";
+import { default as default19 } from "/home/witcher/Repositories/nixtips/node_modules/vitepress/dist/client/theme-default/components/VPTeamPageTitle.vue";
+
+// node_modules/vitepress/dist/client/theme-default/composables/local-nav.js
+import { onContentUpdated } from "vitepress";
+
+// node_modules/vitepress/dist/client/theme-default/composables/outline.js
+import { getScrollOffset } from "vitepress";
 
 // node_modules/vitepress/dist/client/theme-default/support/utils.js
 import { withBase } from "vitepress";
@@ -49,7 +57,7 @@ var useData = useData$;
 
 // node_modules/vitepress/dist/client/theme-default/support/utils.js
 function ensureStartingSlash(path) {
-  return /^\//.test(path) ? path : `/${path}`;
+  return path.startsWith("/") ? path : `/${path}`;
 }
 
 // node_modules/vitepress/dist/client/theme-default/support/sidebar.js
@@ -152,11 +160,8 @@ function useSidebar() {
   };
 }
 
-// node_modules/vitepress/dist/client/theme-default/composables/local-nav.js
-import { onContentUpdated } from "vitepress";
-
 // node_modules/vitepress/dist/client/theme-default/composables/outline.js
-import { getScrollOffset } from "vitepress";
+var ignoreRE = /\b(?:VPBadge|header-anchor|footnote-ref|ignore-header)\b/;
 var resolvedHeaders = [];
 function getHeaders(range) {
   const headers = [
@@ -176,9 +181,8 @@ function serializeHeader(h) {
   let ret = "";
   for (const node of h.childNodes) {
     if (node.nodeType === 1) {
-      if (node.classList.contains("VPBadge") || node.classList.contains("header-anchor") || node.classList.contains("ignore-header")) {
+      if (ignoreRE.test(node.className))
         continue;
-      }
       ret += node.textContent;
     } else if (node.nodeType === 3) {
       ret += node.textContent;
@@ -247,21 +251,23 @@ var theme = {
 var without_fonts_default = theme;
 export {
   default2 as VPBadge,
-  default4 as VPButton,
-  default10 as VPDocAsideSponsors,
-  default5 as VPHomeContent,
+  default3 as VPButton,
+  default4 as VPDocAsideSponsors,
+  default5 as VPFeatures,
+  default6 as VPHomeContent,
   default7 as VPHomeFeatures,
-  default6 as VPHomeHero,
-  default8 as VPHomeSponsors,
-  default3 as VPImage,
-  default9 as VPLink,
-  default11 as VPSocialLink,
-  default12 as VPSocialLinks,
-  default13 as VPSponsors,
-  default17 as VPTeamMembers,
-  default14 as VPTeamPage,
-  default16 as VPTeamPageSection,
-  default15 as VPTeamPageTitle,
+  default8 as VPHomeHero,
+  default9 as VPHomeSponsors,
+  default10 as VPImage,
+  default11 as VPLink,
+  default12 as VPNavBarSearch,
+  default13 as VPSocialLink,
+  default14 as VPSocialLinks,
+  default15 as VPSponsors,
+  default16 as VPTeamMembers,
+  default17 as VPTeamPage,
+  default18 as VPTeamPageSection,
+  default19 as VPTeamPageTitle,
   without_fonts_default as default,
   useLocalNav,
   useSidebar
