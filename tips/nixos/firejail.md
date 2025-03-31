@@ -1,0 +1,39 @@
+# Firejail
+
+**Firejail** - это простая в использовании песочница, которая ограничивает среду выполнения приложений.
+
+## Пример
+
+```nix
+programs.firejail = {
+  enable = true;
+  wrappedBinaries = {
+    librewolf = {
+      executable = "${lib.getExe pkgs.librewolf}";
+      profile = "${pkgs.firejail}/etc/firejail/librewolf.profile";
+      extraArgs = [
+        # Рекомендовано для U2F USB stick
+        "--ignore=private-dev"
+        # Включаем тёмную тему
+        "--env=GTK_THEME=Adwaita:dark"
+        # Включаем системные уведомления
+        "--dbus-user.talk=org.freedesktop.Notifications"
+      ];
+    };
+  };
+};
+```
+
+## Использование
+
+Теперь вы можете запускать приложение как обычно, и оно будет запущено в песочнице. Помомо этого, можно запускать и приложения, не настроенные в конфиге с помощью
+
+```bash
+$ firejail bash
+```
+
+Для графических приложений рекомендуется использовать профили:
+
+```bash
+$ firejail --profile=$(nix --extra-experimental-features nix-command --extra-experimental-features flakes eval -f '<nixpkgs>' --raw 'firejail')/etc/firejail/firefox.profile firefox
+```
