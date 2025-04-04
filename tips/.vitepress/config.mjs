@@ -76,7 +76,7 @@ export default {
 
     socialLinks: [
       { icon: "github", link: "https://github.com/witttccchhher/nix-conf" },
-      { icon: "telegram", link: "https://t.me/tipsfornix" }
+      { icon: "telegram", link: "https://t.me/nixtips_ru" }
     ]
   }
 }
