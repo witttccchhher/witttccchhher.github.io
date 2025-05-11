@@ -1,0 +1,335 @@
+---
+title: Установка
+---
+import {
+  AnimatedSpan,
+  Terminal,
+  TypingAnimation,
+} from "@/components/magicui/terminal";
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+NixOS поддерживает как **графическую** установку, так и **минимальную**.
+
+- **Графическая** установка NixOS практически не отличается от установки любого другого дистрибутива Linux. В установочном образе используется программа Calamares, которая позволяет легко установить систему с указанными базовыми настройками. На выбор предоставляется два образа: с KDE Plasma или с GNOME. Во время установки можно выбрать любую доступную среду рабочего стола, а также указать разрешение на использование проприетарного программного обеспечения.
+- **Минимальный** установочный образ не содержит в себе графического интерфейса, и как следствие меньше весит, однако требует хороших навыков работы с терминалом для успешной установки.
+
+Образы ISO можно скачать с [официального сайта](https://nixos.org/download/) со вкладки ISO образов.
+
+<Callout>Стоит предупредить, что установка NixOS требует **обязательного соединения с интернетом**, а также она может занять немного больше времени чем установка других классических дистрибутивов Linux.</Callout>
+
+# Пошаговая инструкция
+## Запись ISO на диск
+После загрузки ISO образа NixOS вам нужно записать его на диск. Вы можете сделать это либо при помощи графических программ, таких как Balena Etcher, Gnome Disks и т.п. Я не буду акцентировать внимание на них, так как запись через них не требует никаких особых навыков. Также можно использвать Ventoy, но некоторые люди говорят, что с ним бывают проблемы.
+
+Я покажу способ записи через `dd`. Для начала вам нужно найти устройство, на которое вы будете записывать образ. Сделать это можно с помощью команд `lsblk` или `sudo fdisk -l`. Во всех следующих шагах заменяйте `/dev/sdX` на свое устройство (например, `/dev/sdc`). Теперь выполните команды:
+```shell
+$ sudo umount /dev/sdX
+$ sudo dd if=<путь к образу NixOS> of=/dev/sdX bs=4M status=progress conv=fsync oflag=direct
+```
+
+## Загрузка с установочного диска
+Чтобы загрузиться с установочного диска, для начала вставьте его в ваше устройство. После этого перезагрузите его. Во время загрузки, на дисплее ранней загрузки вам нужно войти в BIOS/UEFI. Сделать это можно, нажав на одну из установленной вашим обородованием клавишей, зачастую это **F12**, **F1**, **F9**, **F10**, **Enter**, **Del**, **Esc**. Если ни одна из этих клавиш не сработала, попробуйте посмотреть, может нужная вам клавиша написана на загрузочной заставке. Также можно поискать ваше оборудование в интернете, чтобы узнать нужную.
+
+<Callout>Если ваш компьютер поддерживает и BIOS и UEFI вы должны выбрать именно UEFI.</Callout>
+
+После загрузки в BIOS найдите и выберите ваш установочный диск как загрузочное устройство.
+
+## Вход в систему
+После загрузки образа, введите логин `nixos` и аналогичный пароль чтобы попасть в систему. Теперь выполните команду `sudo -i` чтобы войти в режим выполнения команд от имени `root`.
+
+## Подключение к сети
+Процесс загрузки должен был автоматически включить сервисы сети (проверьте командой `ip a`). Теперь мы можем начать настройку сети:
+
+<Terminal className="terminal">
+    <TypingAnimation>$ sudo systemctl start wpa_supplicant</TypingAnimation>
+    <TypingAnimation delay={2000}>$ wpa_cli</TypingAnimation>
+    <TypingAnimation delay={2500}>&gt; add_network</TypingAnimation>
+    <AnimatedSpan delay={3500} className="text-blue-500">
+        <span>0</span>
+    </AnimatedSpan>
+    <TypingAnimation delay={4000}>&gt; set_network 0 ssid "&lt;имя сети&gt;"</TypingAnimation>
+    <AnimatedSpan delay={5500} className="text-green-500">
+        <span>OK</span>
+    </AnimatedSpan>
+    <TypingAnimation delay={6000}>&gt; set_network 0 psk "&lt;пароль сети&gt;"</TypingAnimation>
+    <AnimatedSpan delay={7500} className="text-green-500">
+        <span>OK</span>
+    </AnimatedSpan>
+    <TypingAnimation delay={8000}>&gt; enable_network 0</TypingAnimation>
+    <AnimatedSpan delay={9000} className="text-green-500">
+        <span>OK</span>
+    </AnimatedSpan>
+    <TypingAnimation delay={9500}>&gt; quit</TypingAnimation>
+    <AnimatedSpan delay={10500} className="text-muted-foreground">
+        <span>&lt;3&gt;CTRL-EVENT-CONNECTED - Connection to 32:85:ab:ef:24:5c completed [id=0 id_str=]</span>
+    </AnimatedSpan>
+</Terminal>
+
+## Разбиение и форматирование дисков
+На самом деле, разбиение дисков через `parted`, например - процесс императивный. Если вы хотите сделать и это декларативно, для вас есть [disko](https://github.com/nix-community/disko). Вы можете прочитать мою статью про разбиение диска при помощи disko.
+
+Сейчас установка разделяется на два варианта, в зависимости от важего железа - UEFI или Legacy Boot. Для того, чтобы проверить, поддерживается ли у вас UEFI, выполните команду `efibootmgr`. Если результат - `EFI variables are not supported on this system.`, значит UEFI для вас недоступен.
+
+### UEFI (GPT)
+Это минимальный пример установки NixOS для UEFI на диск `dev/sda`.
+
+<Steps>
+<Step>
+
+Создайте таблицу разделов GPT
+```shell
+$ parted /dev/sda --mklabel gpt
+```
+
+</Step>
+<Step>
+
+Создайте корневой раздел
+```shell
+$ parted /dev/sda -- mkpart root ext4 512MB -8GB
+```
+
+</Step>
+<Step>
+
+Далее необходимо добавить раздел подкачки
+```shell
+$ parted /dev/sda -- mkpart swap linux-swap -8GB 100%
+```
+
+</Step>
+<Step>
+
+Ну и наконец, загрузочный раздел
+```shell
+$ parted /dev/sda -- mkpart ESP fat32 1MB 512MB
+$ parted /dev/sda -- set 3 esp on
+```
+
+</Step>
+</Steps>
+
+### Legacy Boot (MBR)
+Это минимальный пример установки NixOS для Legacy Boot на диск `dev/sda`.
+
+<Steps>
+<Step>
+
+Создайте таблицу разделов MBR
+```shell
+$ parted /dev/sda -- mklabel msdos
+```
+
+</Step>
+<Step>
+
+Создайте корневой раздел
+```shell
+$ parted /dev/sda -- mkpart primary 1MB -8GB
+```
+
+</Step>
+<Step>
+
+Установите флаг загрузки корневого раздела на ON
+```shell
+$ parted /dev/sda -- set 1 boot on
+```
+
+</Step>
+<Step>
+
+Создайте раздел подкачки
+```shell
+$ parted /dev/sda -- mkpart primary linux-swap -8GB 100%
+```
+
+</Step>
+</Steps>
+
+### Форматирование
+```shell
+$ mkfs.ext4 -L nixos /dev/sda1
+$ mkswap -L swap /dev/sda2
+```
+
+<Callout>
+Для UEFI
+```shell
+$ mkfs.fat -F 32 -n boot /dev/sda3
+```
+</Callout>
+
+## Подготовка к установке
+
+<Steps>
+<Step>
+
+Примонтируйте диск, на котором будет установлена NixOS
+```shell
+$ mount /dev/disk/by-label/nixos /mnt
+```
+
+<Callout>
+Для UEFI также нужно примонтировать загрузочный раздел
+```shell
+$ mkdir -p /mnt/boot
+$ mount -o umask=077 /dev/disk/by-label/boot /mnt/boot
+```
+</Callout>
+
+</Step>
+<Step>
+
+Включите раздел подкачки
+```shell
+$ swapon /dev/sda2
+```
+
+</Step>
+<Step>
+
+Сгенерируйте конфиг системы
+```shell
+$ nixos-generate-config --root /mnt
+```
+и отредактируйте его
+```shell
+$ nano /mnt/etc/nixos/configuration.nix
+```
+Если вам не нравится `nano` редактор, вы можете использовать, например `neovim`, установив его командой `nix-env -f '<nixpkgs>' -iA neovim`.
+
+### Для Legacy Boot систем
+Вы должны установить опцию `boot.loader.grub.device` - диск, на который будет установален GRUB, в нашем случае это `/dev/sda`.
+
+Если у вас стоит дуал-бут, вам нужно установить `boot.loader.grub.useOSProber = true;`.
+
+### Для UEFI систем
+Выберите бутлоадер - systemd-boot (рекомендуется) или GRUB.
+
+Для первого установите `boot.loader.systemd-boot.enable = true;`.
+
+Для второго нужно установить `boot.loader.grub.device = "nodev";` и `boot.loader.grub.efiSupport = true;`.
+Если у вас стоит дуал-бут, вам нужно установить `boot.loader.grub.useOSProber = true;`.
+
+</Step>
+</Steps>
+
+## Создание минимальной конфигурации
+При открытии сгенерированного `configuration.nix` вы увидите много закомментированных опций. Лучше на начальном этапе установки настроить их, чтобы загрузившись в готовую систему получить ее сразу рабочей. Далее я напишу минимальную конфигурацию, необходимую для установки NixOS:
+```nix title="/mnt/etc/nixos/configuration.nix"
+{ config, lib, pkgs, ... }:
+
+{
+  import = [
+    # Обязательный импорт файла конфигурации вашего железа
+    ./hardware-configuration.nix
+  ];
+
+  # Для Legacy Boot систем
+  boot.loader.grub = {
+    enable = true;
+    device = "/dev/sda";
+  };
+
+  # Для UEFI систем
+  boot.loader.systemd-boot.enable = true;
+
+  # Для работы сети, нужно выбрать хостнейм, а также включить NetworkManager
+  networking = {
+    hostName = "<выберите имя хоста>";
+    wireless.enable = true;
+    networkmanager.enable = true;
+  };
+
+  /* Выбор версии системы, не редактируйте эту строчку,
+     оставьте ее такой, какую сгенерировала команда nixos-generate-config */
+  system.stateVersion = "25.05";
+}
+```
+Теперь рассмотрим минимальную конфигурацию для приятной работы и удобной настройки только что установленной системы:
+```nix title="/mnt/etc/nixos/configuration.nix"
+{ config, lib, pkgs, ... }:
+
+{
+  import = [
+    # Обязательный импорт файла конфигурации вашего железа
+    ./hardware-configuration.nix
+  ];
+
+  # Для Legacy Boot систем
+  boot.loader.grub = {
+    enable = true;
+    device = "/dev/sda";
+  };
+
+  # Для UEFI систем
+  boot.loader.systemd-boot.enable = true;
+
+  # Выберите свой часовой пояс, доступные пояса можно узнать командой timedatectl list-timezones
+  time.timeZone = "Europe/Moscow";
+
+  # Для работы сети, нужно выбрать хостнейм, а также включить NetworkManager
+  networking = {
+    hostName = "<выберите имя хоста>";
+    wireless.enable = true;
+    networkmanager.enable = true;
+  };
+
+  # Устанавливает стандартные локали на русские
+  i18n.defaultLocale = "ru_RU.UTF-8";
+  # Изменение шрифта, параметров языка в TTY
+  console = {
+    font = "Lat2-Terminus16";
+    keyMap = "us";
+    useXkbConfig = true;
+  };
+
+  # Создание пользователя
+  users.users.<выберите имя пользователя> = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" ]; # Включает sudo для пользователя
+    # Установка пакетов, доступных только этому пользователю
+    packages = with pkgs; [
+      tree # Пример, можете устанавливать любые другие пакеты
+    ];
+  };
+
+  /* Установка пакетов, лучше установить некоторые на этом этапе
+     например nmtui, чтобы после загрузки в готовую систему можно
+     было с легкостью настроить подключение к сети */
+  environment.systemPackages = with pkgs; [
+    neovim
+    nmtui
+  ];
+
+  /* Выбор версии системы, не редактируйте эту строчку,
+     оставьте ее такой, какую сгенерировала команда nixos-generate-config */
+  system.stateVersion = "25.05";
+}
+```
+
+## Наконец, установим систему
+```shell
+$ nixos-install
+```
+Эта команда установит вам систему. Если во время установки возникнут какие-либо ошибки, вы можете исправить их, а затем продолжить установку этой же командой.
+
+На последнем шаге установки, команда `nixos-install` попросит вас ввести пароль для пользователя `root`. Придумайте его:
+
+<Terminal className="terminal">
+    <AnimatedSpan>
+        <span>setting root password...</span>
+    </AnimatedSpan>
+    <TypingAnimation delay={500}>New password: ********</TypingAnimation>
+    <TypingAnimation delay={1500}>Retype new password: ********</TypingAnimation>
+</Terminal>
+
+Также, если вы установили в конфигурации обычного пользователя, вам нужно задать для него пароль:
+```shell
+$ nixos-enter --root /mnt -c 'passwd <имя вашего пользователя>'
+```
+Если все прошло успешно:
+```shell
+$ reboot
+```

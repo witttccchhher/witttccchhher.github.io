@@ -1,0 +1,113 @@
+---
+title: Установка
+---
+import { Badge } from "@/components/ui/badge"
+
+# С использованием Nix Flakes <Badge>рекомендуется</Badge>
+У нас есть 2 спосаба установки:
+ - Автономная (*standalone*) установка. Рекомендуется, если вы хотите управлять своим домашним каталогом независимо от системы
+ - В качестве модуля NixOS. Это позволяет собирать профиль пользователя вместе с `nixos-rebuild`
+
+## Автономная (standalone) установка
+Запустите следующую команду для инициализации Home Manager
+```shell
+# Для unstable ветки
+$ nix run home-manager/master -- init
+
+# Для любого другого релиза
+$ nix run home-manager/release-<version> -- init # Например, release-24.11
+```
+
+Это создаст в *~/.config/home-manager/* 2 файла - `home.nix` и `flake.nix`. Теперь вы можете отредактировать ваш флейк, добавив в `outputs` `homeConfigurations...` из инициализорованного флейка. Также не забудьте добавить Home Manager в `inputs` вашего флейка (также можно взять из инициализированного). Затем отредактируйте `home.nix` в соответствии с вашими потребностями. Пример минимального [здесь](/tips/home-manager/introduction#стартовая-точка).
+После того, как вы завершите начальную настройку, выполните (не забудьте перед этим обновить ваш флейк)
+```shell
+# Короткая версия
+$ home-manager switch
+
+# Длинная версия, если вам нужно указать путь к флейку или имя пользователя
+$ home-manager switch --flake ~/path/to/your/nix/directory#<your username>
+```
+
+## Установка модулем NixOS
+Добавьте следующее в `inputs` вашего флейка:
+```nix
+home-manager = {
+    url = "github:nix-community/home-manager";
+    inputs.nixpkgs.follows = "nixpkgs";
+};
+```
+
+После, добавьте в `outputs`, поле `nixosConfigurations.<hostname>.modules`:
+```nix
+home-manager.nixosModules.home-manager {
+    home-manager.useGlobalPkgs = true;
+    home-manager.useUserPackages = true;
+    home-manager.users.<username> = import ./home.nix; # Укажите путь к вашему home.nix
+
+    # Вы также можете передать home-manager.specialArgs для передачи каких либо аргументов в home.nix
+}
+```
+<Callout>Пример минимального `home.nix` [здесь](/tips/home-manager/introduction#стартовая-точка)</Callout>
+
+Теперь конфигурация Home Manager становится частью конфигурации NixOS и автоматически пересобирается вместе с системой при использовании
+```shell
+$ nixos-rebuild switch --flake <flake path>
+```
+
+# Без использования Nix Flakes
+Здесь есть 2 спосба устанвки, те же самые, что и с флейками.
+
+## Автономная (standalone) установка
+Для начала вам нужно убедиться, что вы можете выполнить такую команду, как `nix-instantiate '<nixpkgs>' -A hello` без прав администратора. За это отвечает опция [`nix.settings.allowed-users`](https://search.nixos.org/options?channel=unstable&show=nix.settings.allowed-users&from=0&size=50&sort=relevance&type=packages&query=nix.settings).
+
+Теперь можно приступать. Добавим канал Home Manager в систему:
+```shell
+# Для unstable ветки
+$ nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+
+# Для любого другого релиза
+$ nix-channel --add https://github.com/nix-community/home-manager/archive/release-<version>.tar.gz home-manager # Например, release-24.11
+
+$ nix-channel --update
+```
+
+Теперь добавьте `home-manager` в список пакетов системы
+```nix
+environment.systemPackages = with pkgs; [ home-manager ];
+```
+И пересоберите её командой `nixos-rebuild switch`
+
+## Установка модулем NixOS
+Добавим канал Home Manager в систему:
+```shell
+# Для unstable ветки
+$ nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+
+# Для любого другого релиза
+$ nix-channel --add https://github.com/nix-community/home-manager/archive/release-<version>.tar.gz home-manager # Например, release-24.11
+
+$ nix-channel --update
+```
+
+Теперь вы можете добавить следующее в конфигурацию системы:
+```nix
+imports = [ <home-manager/nixos> ];
+
+home-manager.users.<username> = { pkgs, ... }: {
+    home = {
+        username = "<username>";
+        homeDirectory = "/home/som";
+        stateVersion = "24.05";
+    };
+};
+```
+
+Наконец, просто пересоберите систему командой `nixos-rebuild switch`
+
+<Callout>
+Если после пересборки что-то пойдет не так, выполните
+```shell
+$ systemctl status "home-manager-<username>.service"
+```
+чтобы посмотреть вывод сценария пересборки
+</Callout>

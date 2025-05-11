@@ -1,0 +1,18 @@
+{
+  "pages": [
+    "index",
+    "---Nix Package Manager---",
+    "...nixpm",
+    "---Nix Language---",
+    "...nixlang",
+    "---NixOS---",
+    "...nixos",
+    "---Home Manager---",
+    "...home-manager",
+    "---Другое---",
+    "contacts",
+    "thanks"
+  ],
+  "defaultOpen": true,
+  "root": true
+}

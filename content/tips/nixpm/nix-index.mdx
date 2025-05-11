@@ -1,0 +1,29 @@
+---
+title: nix-index
+---
+import {
+  AnimatedSpan,
+  Terminal,
+  TypingAnimation,
+} from "@/components/magicui/terminal";
+
+[`nix-index`](https://github.com/nix-community/nix-index) — это утилита, которая позволяет быстро определить, какой пакет из Nixpkgs содержит определённый файл. Она создаёт локальную базу данных, индексируя содержимое всех пакетов, доступных в бинарных кешах Nix.
+
+Допустим, вы хотите найти, какой пакет содержит исполняемый файл `hello`. После создания индекса можно выполнить:
+
+<Terminal className="terminal">
+    <TypingAnimation>$ nix-locate "bin/hello"</TypingAnimation>
+    <AnimatedSpan delay={1500} className="text-muted-foreground">
+        <span>
+            hello.out                                        29,488 x /nix/store/&lt;hash&gt;-hello-&lt;version&gt;/bin/hello
+            linuxPackages_4_4.dpdk.examples               2,022,224 x /nix/store/&lt;hash&gt;-dpdk-&lt;version&gt;-examples/bin/helloworld
+            ...
+        </span>
+    </AnimatedSpan>
+</Terminal>
+
+Это особенно полезно, когда вы знаете имя файла, но не уверены, в каком пакете он находится.
+
+Основной недостаток nix-index заключается в том, что перед первым использованием необходимо создать индекс, что может занять значительное время и ресурсы, особенно на системах с ограниченными возможностями.
+
+Чтобы избежать необходимости локальной индексации, можно воспользоваться проектом [`nix-index-database`](https://github.com/nix-community/nix-index-database). Он предоставляет предварительно сгенерированные базы данных для различных каналов Nixpkgs, обновляемые еженедельно.

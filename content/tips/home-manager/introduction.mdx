@@ -1,0 +1,181 @@
+---
+title: Введение
+---
+
+Home Manager (далее: **HM**) - это система для управления пользовательской конфигурацией с помощью менеджера пакетов Nix. Простыми словами, HM позволяет:
+ - устанавливать программы и настраивать что-либо без прав администратора (также, все что вы установите или настроите не будет доступно для учетной записи администратора)
+ - управлять вашей конфигурацией в каталогах пользователя, а не администратора (например, для настройки вашего терминала, браузера, установки GTK и Qt тем, иконок и т.п.)
+
+# Пример конфигурации
+
+На первый взгляд может показаться, что HM - сборник сложных параметров, но на самом деле большинство из этих опций отвечает лишь за установку опции в конфигурации чего либо.
+Для примера возьмем опцию
+```nix
+programs.git = {
+    enable = true;
+    extraConfig = {
+        credential.helper = "store";
+    };
+};
+```
+Этот код устанавливает Git и записывает в конфиг параметр, заставляющий сохранить введенный пароль при отправке изменений в удаленный репозиторий (`git push origin master`), например. При обычной, императивной настройке мы бы написали это в `.gitconfig`:
+```toml
+[credential]
+helper = "store"
+```
+
+## Пример конфигурации абстрактного пакета
+```nix
+{ pkgs, config, lib, ... }: {
+    programs.<name> = {
+        enable = true; # Включает пакет, почти у всех программ есть такая опция
+        package = pkgs.<name>-with-patches; # Эта опция также есть у большинства программ, позволяет указать какой пакет использовать, если у программы есть вариации (например neovim/neovim-qt/neovim-gtk)
+
+        settings = { # Одна из вариаций настройки программы
+            someopt1.enable = false;
+            someopt2 = lib.mkForce "somevalue"; # Заставляем HM установить эту опцию, даже если она где либо переопределяется
+            someopt3 = {
+                somesubopt1 = true;
+                somesubopt2 = config.programs.someprogram.someopt; # Берем какой-либо параметр из уже определенных в HM
+            };
+        };
+
+        extraConfig = /* <programming language> */ ''
+            someopt1 { enable: false }
+            someopt2: "somevalue"
+
+            [someopt3]
+            somesubopt1: true
+            somesubopt2: 314
+        ''; # Другой вариант настройки (зависит от того, как это реализовано в home manager)
+    };
+}
+```
+
+<Callout>Комментарий с названием языка программирования перед куском кода работает, к сожалению, не везде. Это функция Treesitter (https://github.com/nvim-treesitter/nvim-treesitter), плагина для подсветки синтаксиса в Neovim</Callout>
+
+## Пример конфигурации программы, для которой нет опций в HM
+А что делать, если в HM нет опций для настройки чего-либо? Тогда на помощь на приходят `home.file` и `xdg.configFile`:
+```nix
+xdg.configFile."<относительный путь к файлу конфига>".text = /* <programming language> */ ''
+    someopt1 = true
+
+    [somesection]
+    someopt2 = "yes"
+''; # Записывает содержимое в файл, который вы указали, относительно директории ~/.config
+
+home.file."<путь к файлу>".text = /* <programming language> */ ''
+    from some import something
+
+    API_KEY=d08c8e98-26a9-4ed4-ae79-b8ef0778f5ef
+    something.set_api_key(API_KEY)
+''; # То же, что и предыдущая, но работает относительно домашней директории
+
+home.file."<путь к файлу>".text = builtins.readFile ./config; # Чтение файла из папки с конфигом на Nix
+```
+
+<Callout>Кстати, при указании API ключей в конфиге нельзя забывать, что это будет сохранено в `/nix/store`. Для этого можно использовать, например, [sops-nix](https://github.com/Mic92/sops-nix)</Callout>
+
+# Стартовая точка
+
+Разберем стандартную, почти минимальную конфигурацию HM:
+```nix
+{ config, pkgs, ... }: {
+    home = {
+        username = "<your username>"; # Имя пользователяS
+        homeDirectory = "/path/to/your/home/directory"; # Путь к ~, обычно /home/<username>
+        stateVersion = "25.05"; # Ваша версия NixOS
+
+        packages = with pkgs; [ # Эти пакеты будут установлены только для текущего пользователя
+            vim
+            python
+            firefox
+        ];
+
+        sessionVariables = { # Эти переменные среды будут установлены только для текущего пользователя
+            EDITOR = "vim";
+            FLAKE = "${config.home.homeDirectory}/nix/flake.nix";
+        };
+    };
+}
+```
+
+# Использование HM
+
+Вы спросите: я написал себе конфиг, но как теперь его обновить? Ведь он не применится после сохранения файлов. На самом деле все очень просто: если у вас standalone HM, то пересоберите его командой `home-manager switch`. Если HM установлен как модуль NixOS, пересоберите систему.
+```shell
+# Короткая версия
+$ home-manager switch
+$ nixos-rebuild switch
+
+# Длинная версия, нужна только если у вас несколько конфигураций HM или же путь до флейка не указан где-либо еще
+$ home-manager switch --flake ~/path/to/your/nix/directory#<your username>
+$ nixos-rebuild switch --flake ~/path/to/your/nix/directory#<your hostname>
+```
+
+# Пример конфигурации Alacritty
+
+Попробуем написать небольшую конфигурацию для эмулятора терминала Alacritty
+```nix
+{ pkgs, ... }: {
+    programs.alacritty = let
+        font = {
+            family = "JetBrains Mono";
+            size = 16;
+        };
+    in {
+        enable = true; /* Устанавливаем alacritty.
+                          Обратите внимание, при этом не обязательно
+                          указывать alacritty в списке пакетов для установки */
+
+        package = pkgs.alacritty; /* Указываем какой именно пакет мы хотим установить.
+                                     Например, можно установить какой-либо форк */
+
+        settings = { /* Настройки alacritty, которые будут преобразованы
+                        в формат toml и записаны в файл ~/.config/alacritty.toml */
+            font = {
+                size = font.size; /* Здесь мы устанавливаем размер шрифта,
+                                     который берется из конструкции let ... in выше */
+                normal = { family = font.family; style = "Regular"; };
+                normal = { family = font.family; style = "Bold"; };
+                normal = { family = font.family; style = "Italic"; };
+            };
+            cursor = {
+                style = { shape = "Block"; blinking = "Off"; };
+                unfocused_hollow = false;
+            };
+        };
+    };
+}
+```
+
+Все, что мы написали выше приведет к следующим изменениям после выполнения команды `home-manager switch`:
+ - в систему будет установлен Alacritty (обратите внимание: только для пользователя, для которого была написана конфигурация)
+ - будет установлен стандартный пакет alacritty из Nixpkgs, если вы не укажете какой-либо другой пакет
+ - в файл *~/.config/alacritty/alacritty.toml* будет записано следующее:
+```toml
+[font]
+size = 16
+[font.normal]
+family = "JetBrains Mono"
+style = "Regular"
+[font.bold]
+family = "JetBrains Mono"
+style = "Bold"
+[font.italic]
+family = "JetBrains Mono"
+style = "Italic"
+
+[cursor]
+unfocused_hollow = false
+[cursor.style]
+blinking = "Off"
+shape = "Block"
+```
+
+# Поиск опций HM
+
+Где искать все параметры для Home Manager? Для этого есть несколько сайтов:
+ - [Nix-community Home Manager Configuration Options ](https://nix-community.github.io/home-manager/options.xhtml) - просто список абсолютно всех опций, поиска нет (официальный)
+ - [Home Manager option search by Extranix](https://home-manager-options.extranix.com/) - самый удобный сайт, позволяет искать опции и выбирать релиз HM
+ - [Searchix by Alanpearce](https://searchix.alanpearce.eu/options/home-manager/search) - ещё один сайт с поиском опций, не позволяет выбрать релиз, а также имеет довольно странную сортировку результатов (иногда трудно найти нужную опцию)

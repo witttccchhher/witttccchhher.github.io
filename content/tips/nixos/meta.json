@@ -1,0 +1,11 @@
+{
+  "pages": [
+    "installation",
+    "flakes",
+    "modules",
+    "kernel",
+    "firejail",
+    "greetd",
+    "systemd-nspawn"
+  ]
+}
