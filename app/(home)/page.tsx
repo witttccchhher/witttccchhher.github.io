@@ -7,9 +7,14 @@ import { GooeyText } from "@/components/ui/gooey-text-morphing";
 import { GithubInfo } from "fumadocs-ui/components/github-info";
 import { MoveRight } from "lucide-react";
 
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+
 export default function HomePage() {
   return (
     <main className="flex flex-col justify-center items-center mt-10 min-h-[88vh]">
+      <Analytics />
+      <SpeedInsights />
       <div className="flex items-center">
         <Image src="/logo.png" alt="Logo" width={400} height={0} />
         <h1 className="text-8xl font-bold">
