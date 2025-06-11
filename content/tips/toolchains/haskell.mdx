@@ -1,0 +1,110 @@
+---
+title: Haskell
+---
+
+<Callout>
+Внимание! Автор данной статьи хоть и увлекается хаскеллем, с большими проектами и базами не работал.\
+В данной статье будут рассказаны базовые вещи о взаимоотношении Haskell с Nix(pkgs), подробнее на [вики](https://wiki.nixos.org/wiki/Haskell).\
+Также, [автор](https://proggerx.t.me) открыт для **конструктивной** критики (возможно, я исправлю статью).
+</Callout>
+
+Haskell - это чистый функциональный язык программирования, тулчейн которого имеет довольно хорошую связь с nixpkgs (именно репозиторием), благодаря интересной интеграции.\
+
+## GHC
+Пойдём по порядку. У вас есть .hs файл, который вам прислал друг (**<del>НЕ </del>ВИРУС**). Как его скомпилировать и запустить?
+Вы можете легко получить шелл с GHC используя
+- `nix-shell -p ghc`
+- или `nix shell nixpkgs#ghc`
+
+Для того чтобы указать нужную вам версию ghc _(это очень новый вирус, а ghc в nixpkgs по умолчанию обычно не сильно новый)_, используйте пакет вида `pkgs.haskell.compiler.ghcXYZ`.
+
+Для того чтобы получить немножко пакетиков (не зип), можно воспользоваться `withPackages`:
+```nix
+{
+	compiler = (pkgs.ghc.withPackages (a: with a; [
+		vector
+		containers
+		wreq
+	]));
+}
+```
+
+## Stack
+Если ваш друг кинул вам на Nix вирус, который требует stack для сборки, он вам больше не друг.
+Но вот пример:
+```nix
+with (import <nixpkgs> { });
+haskell.lib.buildStackProject {
+  name = "HaskellR";
+  buildInputs = [ R zeromq zlib ];
+}
+```
+
+## Hackage и Nix
+Небольшое отступление: разъясню, как работают хаскельные пакеты (библиотеки и исполняемые) в nixpkgs.
+В nixpkgs есть целая система, отвечающая за то, чтобы доставать пакеты с [Hackage](https://hackage.haskell.org/) и делать из них никсовые деривации.
+Так как в корне любого (почти) проекта есть cabalfile, там используется cabal2nix, который и создает огромный сет пакетов.
+
+## Cabal
+И тут самый сок. Вообщем, на обычном компьютере (без NixOS), человек может ввести `cabal build`, и всё у него будет хорошо (на самом деле нет, он будет целый день собирать все зависимости из сурцов).
+Но мы идём дальше, мы хотим binary cache, воспользуемся nixpkgs и соберём проект по-умному.
+```nix
+{ haskellPackages }:
+haskellPackages.developPackage {
+	root = ./.; # корень проекта
+};
+```
+
+Данная функция developPackage создаёт как пакет, так и devShell к нему, поделюсь своим шаблоном базового хаскельного флейка:
+
+```nix
+{
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+  };
+  outputs =
+    { flake-parts, nixpkgs, ... }@inputs:
+    let
+      hs-project =
+        {
+          pkgs,
+          isShell ? false,
+        }:
+        pkgs.haskellPackages.developPackage {
+          root = ./.;
+          returnShellEnv = isShell;
+          modifier = ( drv: # изменение деривации
+            pkgs.haskell.lib.addBuildTools drv [
+              pkgs.mkdocs # добавляем mkdocs (это ради шелла)
+            ];
+          )
+        };
+    in
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = nixpkgs.lib.platforms.unix;
+      perSystem =
+        { pkgs, ... }:
+        {
+          packages.default = hs-project { inherit pkgs; };
+          devShells.default = hs-project {
+            inherit pkgs;
+            isShell = true;
+          };
+        };
+    };
+}
+```
+
+## А дальше?
+Если вам этого мало, или какой-то зависимости нет в nixpkgs, то можно использовать overrides и source-overrides:
+```nix
+pkgs.haskellPackages.developPackage {
+  root = ./.;
+  source-overrides = {
+    mylibrary = ./mylibrary;
+  };
+}
+```
+
+<Callout>Если вам мало и этого, и/или у вас крупный проект, рекомендуется использовать [haskell.nix](https://github.com/input-output-hk/haskell.nix)</Callout>
