@@ -3,6 +3,8 @@
     "index",
     "---Nix Package Manager---",
     "...nixpm",
+	"---Toolchains & packaging---",
+	"...toolchains",
     "---Nix Language---",
     "...nixlang",
     "---NixOS---",
