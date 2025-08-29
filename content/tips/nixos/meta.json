@@ -6,6 +6,8 @@
     "kernel",
     "firejail",
     "greetd",
-    "systemd-nspawn"
+    "systemd-nspawn",
+    "selinux",
+    "microvm"
   ]
 }

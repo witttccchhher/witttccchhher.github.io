@@ -1,0 +1,21 @@
+---
+title: Microvm.nix
+---
+
+**Microvm.nix** - флейк, который позволяет запустить NixOS внутри виртуальной машины
+
+## Использование
+
+Инициализируйте флейк с шаблоном microvm.nix
+
+```sh
+nix flake init -t github:astro/microvm.nix
+```
+
+Запустите
+
+```sh
+nix run .#my-microvm
+```
+
+Вся конфигирация происходит в файле flake.nix
